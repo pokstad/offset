@@ -10,16 +10,16 @@ import (
 func TestCalcRune(t *testing.T) {
 	for _, tt := range []struct {
 		name   string // filepath to fixture
-		line   uint   // line number
-		col    uint   // column rune offset
-		offset uint   // rune offset
+		line   int    // line number
+		col    int    // column rune offset
+		offset int    // rune offset
 		errB   bool   // should we expect an error?
 	}{
 		{
 			name:   "testdata/test.go",
 			line:   3,
 			col:    20,
-			offset: 38,
+			offset: 37,
 			errB:   false,
 		},
 	} {

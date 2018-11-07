@@ -1,25 +1,43 @@
 package offset
 
 import (
-	"bufio"
+	"errors"
 	"io"
+	"text/scanner"
+)
+
+var (
+	ErrOffsetNotFound = errors.New("line and column offset not found")
 )
 
 // CalcRune will return the byte offset for the specified line and column of
-// the reader (e.g. source code file). Both line and column indexes start at 1.
-func CalcRune(r io.Reader, line, col uint) (uint, error) {
+// the reader (e.g. source code file). Line number will start counting at 1,
+// while column starts counting at 0.
+func CalcRune(r io.Reader, line, col int) (int, error) {
 	var (
-		s  = bufio.NewScanner(r)
-		bc = uint(0)
+		s scanner.Scanner
 	)
 
-	for i := uint(1); s.Scan() && i < line; i++ {
-		if err := s.Err(); err != nil {
-			return 0, err
+	s.Init(r)
+
+	for {
+		r := s.Next()
+
+		if r == scanner.EOF {
+			break
 		}
 
-		bc += uint(len(s.Text()) + 1) // add newline to text length
+		p := s.Pos()
+
+		if p.Line > line {
+			break
+		}
+
+		if p.Line == line && p.Column == col {
+			return p.Offset, nil
+		}
+
 	}
 
-	return bc + col, nil
+	return 0, ErrOffsetNotFound
 }

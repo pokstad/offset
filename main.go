@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	line = flag.Uint("line", 0, "line number in file")
-	col  = flag.Uint("column", 0, "rune column offset in line")
+	line = flag.Int("line", -1, "line number in file (count starts at 1)")
+	col  = flag.Int("column", -1, "column offset in line (count starts at 0)")
 	srcP = flag.String("source", "", "source file")
 )
 
@@ -24,6 +24,9 @@ func main() {
 	)
 
 	// validate inputs
+	if *line < 1 || *col < 0 {
+		log.Fatal("invalid values for line and column")
+	}
 
 	switch {
 
