@@ -29,6 +29,10 @@ func CalcRune(r io.Reader, line, col int) (int, error) {
 
 		p := s.Pos()
 
+		if p.Line == line && p.Column > col {
+			break
+		}
+
 		if p.Line > line {
 			break
 		}
